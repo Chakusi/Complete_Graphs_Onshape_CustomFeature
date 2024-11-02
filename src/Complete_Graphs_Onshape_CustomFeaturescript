@@ -1,1 +1,76 @@
+///  ***************************************************************************///
+
+//  *****   //   Comlete_Graphs  //     *****
+
+
+
+//  CREATED BY : CHARAN KUMAR SIRIPURAPU
+//  FOR LEARNING PURPOSE
+
+
+//// *****************************************************************************///
+
+
+FeatureScript 2506;
+import(path : "onshape/std/common.fs", version : "2506.0");
+
+annotation { "Feature Type Name" : "People_management", "Feature Type Description" : "Its a feature to show the Number of people and its differernt ways of communocation between them." }
+
+export const People_management = defineFeature(function(context is Context, id is Id, definition is map)
+    precondition
+    {
+      
+        annotation { "Name" : "Number_of_People" }
+        isInteger(definition.N_O_P, POSITIVE_COUNT_BOUNDS);
+        
+        // Define the parameters of the feature type
+    }
+    
+    
+    {
+        
+        var radius is number = 250;
+        
+        var N_O_P is number = definition.N_O_P;
+        
+      
+         
+        for (var i = 0; i < N_O_P; i += 1)
+        {
+            opPoint(context, id + i + "point", {
+                        "point" : vector(radius * cos((i * 360 * degree) / N_O_P), radius * sin((i * 360 * degree) / N_O_P), 0) * millimeter
+                    });
+                    
+        }
+        
+        println( "Number of people is "  ~ N_O_P);
+        
+ 
+        
+        /// creating polygon and its diagonals 
+        
+        
+        for (var k = 0; k < N_O_P; k += 1)
+        {
+            for (var i = k+1; i < N_O_P; i += 1)
+            {
+                
+            opFitSpline(context, id + "Diagonal" + k + i + "fitSpline1",
+            {
+                     "points" :
+                     [
+                       evVertexPoint(context, {
+                                        "vertex" : qCreatedBy(id + k + "point", EntityType.VERTEX) }),
+                       evVertexPoint(context, {
+                                        "vertex" : qCreatedBy(id + (i) % N_O_P + "point", EntityType.VERTEX) })
+                     ]
+            });
+        }
+        
+        }
+
+
+        println("Number of communication lines are " ~ (N_O_P*(N_O_P-3)/2)+N_O_P );
+          
+    });
 
